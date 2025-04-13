@@ -2553,7 +2553,151 @@
         }
       });
     }
+        var client = Lampa.Storage.field('lmetorrentSelect');
+    function startClient(_x) {
+      return _startClient.apply(this, arguments);
+    }
+    function _startClient() {
+      _startClient = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(client) {
+        var result, _yield$Promise$all, _yield$Promise$all2, qbData, qbInfo, _yield$Promise$all3, _yield$Promise$all4, trData, trInfo;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.prev = 0;
+              _context2.t0 = client;
+              _context2.next = _context2.t0 === 'qBittorent' ? 4 : _context2.t0 === 'transmission' ? 12 : _context2.t0 === 'synology' ? 20 : 24;
+              break;
+            case 4:
+              _context2.next = 6;
+              return Promise.all([Qbittorent.GetData(), Qbittorent.GetInfo()]);
+            case 6:
+              _yield$Promise$all = _context2.sent;
+              _yield$Promise$all2 = _slicedToArray(_yield$Promise$all, 2);
+              qbData = _yield$Promise$all2[0];
+              qbInfo = _yield$Promise$all2[1];
+              result = {
+                data: qbData,
+                info: qbInfo
+              };
+              return _context2.abrupt("break", 25);
+            case 12:
+              _context2.next = 14;
+              return Promise.all([Transmission.GetData(), Transmission.GetInfo()]);
+            case 14:
+              _yield$Promise$all3 = _context2.sent;
+              _yield$Promise$all4 = _slicedToArray(_yield$Promise$all3, 2);
+              trData = _yield$Promise$all4[0];
+              trInfo = _yield$Promise$all4[1];
+              result = {
+                data: trData,
+                info: trInfo
+              };
+              return _context2.abrupt("break", 25);
+            case 20:
+              _context2.next = 22;
+              return Synology.GetData();
+            case 22:
+              result = _context2.sent;
+              return _context2.abrupt("break", 25);
+            case 24:
+              throw new Error('Unknown client type');
+            case 25:
+              console.log('Torrent client data:', result);
+              return _context2.abrupt("return", result);
+            case 29:
+              _context2.prev = 29;
+              _context2.t1 = _context2["catch"](0);
+              console.error('Error fetching client data:', _context2.t1);
+              throw _context2.t1;
+            case 33:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2, null, [[0, 29]]);
+      }));
+      return _startClient.apply(this, arguments);
+    }
+    function torrentInfo() {
+      Lampa.Listener.follow('full', function (e) {
+        if (e.type === 'complite') {
+          setTimeout(function () {
+            function findTorrent(data, method, id) {
+              var searchLabel = "".concat(method, "/").concat(id);
+              return data.find(function (item) {
+                return item.labels && item.labels.includes(searchLabel);
+              });
+            }
+            startClient(client).then(function (r) {
+              if (r && r.data) {
+                var torrent = findTorrent(r.data, e.object.method, e.object.id);
+                if (torrent) {
+                  // Create button element
+                  var $button = $("<div class=\"full-start__button selector button--lme_torrent\">\n                                <svg fill=\"currentColor\" version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 588.601 588.6\" xml:space=\"preserve\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <g> <path d=\"M168.405,288.048c-3.019,0.084-4.936,0.419-5.864,0.728v20.174l5.632-0.059c6.463-0.078,10.558-4.35,10.558-10.768 C178.73,291.017,174.636,287.869,168.405,288.048z\"></path> <path d=\"M82.324,290.445c-8.177,0.227-12.49,10.278-12.49,22.491c0,12.045,4.588,21.674,12.49,21.737 c8.089,0.079,12.701-9.761,12.701-22.412C95.018,300.86,90.688,290.213,82.324,290.445z\"></path> <path d=\"M125.722,289.235c-2.813,0.082-4.617,0.396-5.484,0.696v19.515l5.276-0.059c6.03-0.074,9.858-4.203,9.858-10.404 C135.372,292.117,131.544,289.074,125.722,289.235z\"></path> <path d=\"M539.568,49.201h-178.2c-0.786,0-1.561,0.074-2.347,0.124V0L11.228,46.419v494.562L359.032,588.6v-50.814 c0.78,0.053,1.55,0.115,2.341,0.115h178.2c20.852,0,37.8-16.959,37.8-37.8v-413.1C577.368,66.161,560.425,49.201,539.568,49.201z M361.368,70.801h178.2c8.928,0,16.2,7.267,16.2,16.2v271.329c-23.272-58.704-70.2-90.393-132.864-99.347 c-18.879-2.705-21.79,0.886-19.687,19.517c1.482,13.252,11.786,9.158,18.747,10.022c56.574,7.085,103.982,49.642,115.288,104.147 c7.267,34.974-1.266,71.872-21.305,101.05h-14.08c36.64-49.116,38.834-102.389,2.964-149.575 c-33.307-43.802-99.62-61.505-145.8-42.604V71.043C359.797,70.93,360.572,70.801,361.368,70.801z M359.032,333.687 c2.226-0.891,4.25-1.703,6.265-2.479c45.752-17.649,97.817-0.606,122.096,39.946c23.757,39.726,14.223,90.034-22.892,122.565 h-14.122c3.912-2.942,7.73-6.181,11.411-9.734c26.314-25.376,35.374-56.162,24.01-90.925 c-11.527-35.258-37.446-55.244-74.007-60.592c-18.114-2.647-36.956,1.244-52.761,9.661V333.687z M359.032,378.891 c0.169-0.163,0.327-0.354,0.506-0.517c22.939-22.17,62.259-21.479,84.555,1.397c22.687,23.277,22.887,60.307-2.479,81.949 c-13.11,11.175-29.995,20.408-46.659,24.49c-11.935,2.921-23.905,4.777-35.923,6.021V378.891z M296.331,275.25l49.401-1.7v11.156 l-19.232,0.514v61.077l-11.938-0.19v-60.57l-18.236,0.493V275.25H296.331z M60.247,292.37l-12.49,0.332v49.265l-7.771-0.11v-48.953 l-11.929,0.321V284.5l32.189-1.113V292.37z M81.857,343.459c-12.677-0.211-20.545-12.983-20.545-30.26 c0-18.077,8.521-31.118,21.209-31.572c13.458-0.466,21.526,12.714,21.526,30.085C104.048,332.153,94.521,343.67,81.857,343.459z M136.836,343.343c-0.738-1.867-1.917-6.982-3.31-14.776c-1.395-8.147-3.73-10.721-8.819-10.895l-4.47,0.025v25.393l-8.701-0.138 v-60.515c3.267-0.828,8.208-1.55,13.324-1.73c7.056-0.242,11.907,1.071,15.238,4.504c2.745,2.797,4.316,7.148,4.316,12.469 c0,8.137-4.398,13.685-9.042,15.868v0.284c3.533,1.641,5.688,6.012,6.951,12.056c1.572,7.857,2.911,15.161,3.963,17.607 L136.836,343.343z M180.312,344.023c-0.788-1.935-2.059-7.229-3.554-15.298c-1.484-8.427-3.995-11.096-9.429-11.264l-4.788,0.021 v26.262l-9.305-0.143v-62.574c3.488-0.865,8.754-1.608,14.241-1.798c7.549-0.274,12.738,1.086,16.313,4.627 c2.942,2.896,4.617,7.394,4.617,12.906c0,8.412-4.704,14.16-9.682,16.428v0.295c3.783,1.688,6.096,6.207,7.446,12.477 c1.68,8.127,3.119,15.684,4.237,18.22L180.312,344.023z M231.742,344.82l-33.874-0.533v-65.646l32.598-1.118v10.083l-22.539,0.609 v17.075l21.266-0.306v9.978l-21.266,0.137v19.438l23.815,0.189V344.82z M241.052,277.151l12.234-0.422l15.515,29.141 c4.061,7.668,7.604,15.688,10.434,23.235h0.19c-0.73-9.313-1.004-18.299-1.004-28.94v-24.301l10.491-0.366v70.208l-11.675-0.18 l-15.881-30.47c-3.828-7.515-7.791-15.884-10.702-23.535l-0.264,0.105c0.43,8.812,0.517,17.819,0.517,29.072v24.421l-9.848-0.152 v-67.816H241.052z M539.568,516.301h-4.915c8.644-11.56,15.746-23.467,21.115-35.743v19.543 C555.769,509.035,548.507,516.301,539.568,516.301z\"></path> </g> </g></svg>\n                                <span>".concat(torrent.completed > 0 ? "".concat(torrent.state, " - ").concat(Number((torrent.completed * 100).toFixed(2)), "%") : torrent.state, "</span>\n                            </div>"));
 
+                  // Attach event handlers
+                  $button.on("hover:enter", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+                    var enabled, menu;
+                    return _regeneratorRuntime().wrap(function _callee$(_context) {
+                      while (1) switch (_context.prev = _context.next) {
+                        case 0:
+                          enabled = Lampa.Controller.enabled().name;
+                          menu = [];
+                          menu.push({
+                            title: Lampa.Lang.translate('resume'),
+                            action: 'resume'
+                          }, {
+                            title: Lampa.Lang.translate('pause'),
+                            action: 'pause'
+                          }, {
+                            title: Lampa.Lang.translate('delete'),
+                            action: 'delete'
+                          });
+                          if (client !== 'synology') menu.push({
+                            title: Lampa.Lang.translate('fullDelete'),
+                            action: 'delete',
+                            deleteFiles: true
+                          });
+
+                          // Set menu
+                          Lampa.Select.show({
+                            title: torrent.completed > 0 ? "".concat(torrent.state, " - ").concat(Number((torrent.completed * 100).toFixed(2)), "%") : torrent.state,
+                            items: menu,
+                            onBack: function onBack() {
+                              Lampa.Controller.toggle(enabled);
+                            },
+                            onSelect: function onSelect(a) {
+                              switch (client) {
+                                case 'qBittorent':
+                                  return Qbittorent.SendCommand(a, torrent);
+                                case 'transmission':
+                                  return Transmission.SendCommand(a, torrent);
+                                case 'synology':
+                                  return Synology.SendCommand(a, torrent);
+                                case 'biglybt':
+                                  return BiglyBT.SendCommand(a, torrent);
+                                default:
+                                  return 'Неизвестный клиент';
+                              }
+                            }
+                          });
+                        case 5:
+                        case "end":
+                          return _context.stop();
+                      }
+                    }, _callee);
+                  })));
+
+                  // Append button to container
+                  e.object.activity.render().find('.full-start-new__buttons').append($button);
+                }
+              } else {
+                console.error('Failed to get torrent client data');
+              }
+            });
+          }, 100);
+        }
+      });
+    }
     function add() {
       // Lang
       Component$1();
